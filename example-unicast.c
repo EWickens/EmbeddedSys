@@ -66,6 +66,19 @@ sent_uc(struct unicast_conn *c, int status, int num_tx)
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
 /*---------------------------------------------------------------------------*/
+static void
+broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+{
+  printf("broadcast message received from %d.%d: '%s'\n",
+         from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
+}
+static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
+static struct broadcast_conn broadcast;
+
+/*---------------------------------------------------------------------------*/
+
+
+
 PROCESS_THREAD(example_unicast_process, ev, data)
 {
   PROCESS_EXITHANDLER(unicast_close(&uc);)
@@ -73,6 +86,7 @@ PROCESS_THREAD(example_unicast_process, ev, data)
   PROCESS_BEGIN();
 
   unicast_open(&uc, 146, &unicast_callbacks);
+  broadcast_open(&broadcast, 129, &broadcast_call);
 
   while(1) {
     static struct etimer et;
