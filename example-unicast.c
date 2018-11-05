@@ -66,11 +66,26 @@ sent_uc(struct unicast_conn *c, int status, int num_tx)
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
 /*---------------------------------------------------------------------------*/
+
+
 static void
 broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
   printf("broadcast message received from %d.%d: '%s'\n",
          from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
+
+	// REPLY FUNCTION VIA UNICAST
+	
+    linkaddr_t addr;
+
+    packetbuf_copyfrom("Hello", 1); //Might want to change this back to five?
+    addr.u8[0] = 1;
+    addr.u8[1] = 0;
+    if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
+      unicast_send(&uc, &addr);
+    }
+    unicast_send(&uc,&addr);
+
 }
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
 static struct broadcast_conn broadcast;
@@ -99,9 +114,9 @@ PROCESS_THREAD(example_unicast_process, ev, data)
     packetbuf_copyfrom("Hello", 5);
     addr.u8[0] = 1;
     addr.u8[1] = 0;
-    if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
-      unicast_send(&uc, &addr);
-    }
+    //if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
+    // unicast_send(&uc, &addr);
+    //}
 
   }
 

@@ -55,6 +55,7 @@ broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 {
   printf("broadcast message received from %d.%d: '%s'\n",
          from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
+	
 }
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
 static struct broadcast_conn broadcast;
@@ -78,7 +79,7 @@ PROCESS_THREAD(example_broadcast_process, ev, data)
   PROCESS_BEGIN();
 
   broadcast_open(&broadcast, 129, &broadcast_call);
-	unicast_open(&uc, 146, &unicast_callbacks);
+  unicast_open(&uc, 146, &unicast_callbacks);
 
   while(1) {
 
