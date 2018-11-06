@@ -78,13 +78,13 @@ broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
 	
     linkaddr_t addr;
 
-    packetbuf_copyfrom("Hello", 1); //Might want to change this back to five?
-    addr.u8[0] = 1;
-    addr.u8[1] = 0;
+    packetbuf_copyfrom("Hello", 5); //Might want to change this back to five?
+    addr.u8[0] = from->u8[0];
+    addr.u8[1] = from->u8[1];
     if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
       unicast_send(&uc, &addr);
     }
-    unicast_send(&uc,&addr);
+   // unicast_send(&uc,&addr);
 
 }
 static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
